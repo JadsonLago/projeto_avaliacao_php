@@ -1,5 +1,5 @@
 /* public/css/style.css */
-
+/* --- ESTILOS DO LOGIN --- */
 body { 
     font-family: Arial, sans-serif; 
     display: flex; 
@@ -68,4 +68,55 @@ h2 {
     margin-bottom: 15px; 
     text-align: center; 
     font-weight: bold;
+}
+
+/* --- ESTILOS DO DASHBOARD --- */
+.topo-dashboard {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 20px;
+}
+
+.info-usuario p {
+    margin: 5px 0;
+}
+
+.data-atual {
+    font-size: 14px;
+    color: #666;
+}
+
+.btn-sair {
+    padding: 10px 20px;
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.conteudo-dashboard {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.tabela-servicos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabela-servicos th, .tabela-servicos td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.tabela-servicos th {
+    background-color: #f4f4f4;
 }

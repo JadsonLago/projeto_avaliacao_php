@@ -5,34 +5,39 @@ session_start();
 
 require_once __DIR__ . '/../autoload.php';
 
-// Criamos o atalho aqui no topo!
 use app\Controllers\LoginController;
+use app\Controllers\DashboardController;
 
-$url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Pega a rota atual da url
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+$url = parse_url($requestUri, PHP_URL_PATH);
 
+// Tratamento simples de rotas (Router manual)
 switch ($url) {
     case '/':
     case '/login':
-        // Olha como o código fica mais limpo e curto sem aquele caminho todo:
-        (new LoginController())->index();
+        $controller = new LoginController();
+        $controller->index();
         break;
         
     case '/logar':
-        (new LoginController())->login();
+        $controller = new LoginController();
+        $controller->login();
         break;
 
     case '/sair':
-        (new LoginController())->logout();
+        $controller = new LoginController();
+        $controller->logout();
         break;
 
     case '/dashboard':
+        // Protecao basica da sessao
         if (!isset($_SESSION['usuario'])) {
             header('Location: /login');
             exit;
         }
 
-        echo "<h1>Você está no Dashboard, " . htmlspecialchars($_SESSION['usuario']['name']) . "!</h1>";
-        echo "<a href='/sair'>Sair</a>";
+        (new DashboardController())->index();
         break;
 
     default:
@@ -40,3 +45,4 @@ switch ($url) {
         echo "Página não encontrada (Erro 404)";
         break;
 }
+
