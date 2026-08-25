@@ -5,43 +5,44 @@ use config\Database;
 use PDO;
 
 class Usuario {
-    private $conexao;
-    private $tabela = 'user';
+    private $db;
+    private $table = 'user';
 
     public function __construct() {
         $banco = new Database();
-        $this->conexao = $banco->conectar();
+        $this->db = $banco->conectar();
     }
 
     public function criarUsuario($nome, $email, $senha) {
-        $sql = "INSERT INTO {$this->tabela} (name, email, password) VALUES (:nome, :email, :senha)";
-        $stmt = $this->conexao->prepare($sql);
+        $sql = "INSERT INTO {$this->table} (name, email, password) VALUES (:nome, :email, :senha)";
+        $stmt = $this->db->prepare($sql);
 
-        $senhaCriptografada = md5($senha); // Criptografa a senha usando MD5
+        // Usando a criptografia segura e moderna do PHP
+        $hash = password_hash($senha, PASSWORD_DEFAULT);
 
         $stmt->bindParam(':nome', $nome);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':senha', $senhaCriptografada);
+        $stmt->bindParam(':senha', $hash);
 
         return $stmt->execute();
     }
 
     public function autenticar($email, $senha) {
-        $senha = md5($senha); // Criptografa a senha usando MD5
+        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
 
-            $sql = "SELECT * FROM {$this->tabela} WHERE email = :email AND password = :senha";
-            $stmt = $this->conexao->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':senha', $senha);
-            $stmt->execute();
-
-            if($stmt->rowCount() > 0){
-                // Usuário autenticado com sucesso
-                return true;
-            } else {
-                // Falha na autenticação
-                return false;
+        if ($stmt->rowCount() > 0) {
+            $user = $stmt->fetch();
+            
+            // Verifica se a senha bate com o hash seguro do banco
+            if (password_verify($senha, $user['password'])) {
+                unset($user['password']);
+                return $user;
             }
         }
+        
+        return false;
     }
 }
