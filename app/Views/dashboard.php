@@ -39,7 +39,27 @@
                     <td colspan="6" style="text-align: center; padding: 20px;">Nenhum serviço encontrado.</td>
                 </tr>
             <?php else: ?>
-                
+                <?php foreach ($servicos as $servico): ?>
+                    <?php 
+                        $isPendente = empty($servico['finished_at']);
+                        $statusText = $isPendente ? "PENDENTE" : "FINALIZADO";
+                        $statusColor = $isPendente ? "#d97706" : "#16a34a";
+                    ?>
+                    <tr>
+                        <td><?= (int)$servico['id_service'] ?></td>
+                        <td><?= htmlspecialchars((string)$servico['description'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td style="color: <?= $statusColor ?>; font-weight: bold;"><?= $statusText ?></td>
+                        <td>R$ <?= number_format((float)$servico['price'], 2, ',', '.') ?></td>
+                        <td><?= htmlspecialchars((string)$servico['nome_usuario'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td>
+                            <a href="/servico/editar?id=<?= (int)$servico['id_service'] ?>">Alterar</a> |
+                            <a href="/servico/excluir?id=<?= (int)$servico['id_service'] ?>" onclick="return confirm('Deseja realmente excluir este serviço?');">Excluir</a>
+                            <?php if ($isPendente): ?>
+                                | <a href="/servico/finalizar?id=<?= (int)$servico['id_service'] ?>" style="color: green; font-weight: bold;">Finalizar</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
     </table>
