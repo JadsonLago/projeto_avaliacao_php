@@ -16,21 +16,23 @@ class LoginController
     }
 
     public function index(): void 
-    {
+    {   
+        // Gera o token CSRF se ele ainda não existir na sessão
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
         // Carrega a tela de login padrao
         require_once __DIR__ . '/../Views/login.php';
     }
 
     public function login(): void 
     {
-        $tokenPost = $_POST['csrf_token'] ?? '';
+        $tokenEnviado = $_POST['csrf_token'] ?? '';
         $tokenSessao = $_SESSION['csrf_token'] ?? '';
 
-        // Bloqueia se o token csrf nao bater
-        if (empty($tokenPost) || $tokenPost !== $tokenSessao) {
-            http_response_code(403);
-            echo "Acesso inválido (CSRF Token Inválido)";
-            exit;
+        // Validação estrita do CSRF
+        if (empty($tokenEnviado) || !hash_equals($tokenSessao, $tokenEnviado)) {
+            die('Acesso inválido (CSRF Token Inválido)');
         }
 
         // Sanitizacao simples das entradas

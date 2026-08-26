@@ -18,7 +18,7 @@
     <form action="/logar" method="POST">
         
         <?php if (isset($_SESSION['csrf_token'])): ?>
-            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
         <?php endif; ?>
 
         <div class="form-group">

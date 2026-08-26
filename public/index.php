@@ -1,7 +1,18 @@
 <?php
 declare(strict_types=1);
 
-session_start(); 
+session_start();
+
+// Avisa o servidor embutido do PHP para entregar arquivos estáticos direto
+if (php_sapi_name() === 'cli-server') {
+    // Pegamos o caminho sem usar o realpath() para garantir que sempre será uma string
+    $caminhoArquivo = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    
+    // O is_file() agora recebe uma string com certeza. Se não for um arquivo, ele ignora.
+    if (is_file($caminhoArquivo)) {
+        return false;
+    }
+}
 
 require_once __DIR__ . '/../autoload.php';
 

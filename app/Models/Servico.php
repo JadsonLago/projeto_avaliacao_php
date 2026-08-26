@@ -65,5 +65,31 @@ class Servico {
         
         return $comando->execute();
     }
+
+    public function buscarPorId(int $id) {
+        $sql = "SELECT s.*, u.email as email_usuario, u.name as nome_usuario 
+                FROM {$this->table} s
+                INNER JOIN user u ON s.user_id_user = u.id_user
+                WHERE s.id_service = :id LIMIT 1";
+                
+        $comando = $this->db->prepare($sql);
+        $comando->bindParam(':id', $id, PDO::PARAM_INT);
+        $comando->execute();
+        
+        return $comando->fetch();
+    }
+
+    public function finalizarServico(int $id, float $comissao, string $dataFinalizacao): bool {
+        $sql = "UPDATE {$this->table} 
+                SET finished_at = :data, commission_user = :comissao 
+                WHERE id_service = :id";
+                
+        $comando = $this->db->prepare($sql);
+        $comando->bindParam(':data', $dataFinalizacao);
+        $comando->bindParam(':comissao', $comissao);
+        $comando->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        return $comando->execute();
+    }
 }
 
