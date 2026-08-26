@@ -1,48 +1,58 @@
 <?php
 
 namespace app\Models;
+
 use config\Database;
 use PDO;
 
-class Usuario {
+class Usuario 
+{
     private $db;
-    private $table = 'user';
+    private $tabela = 'user';
 
-    public function __construct() {
+    public function __construct() 
+    {
         $banco = new Database();
         $this->db = $banco->conectar();
     }
 
     public function criarUsuario($nome, $email, $senha) {
-        $sql = "INSERT INTO {$this->table} (name, email, password) VALUES (:nome, :email, :senha)";
-        $stmt = $this->db->prepare($sql);
+        $sql="INSERT INTO ".$this->tabela." (name, email, password) VALUES (:nome, :email, :senha)";
+        $cmd = $this->db->prepare($sql);
 
-        // Usando a criptografia segura e moderna do PHP
+        // gerando hash da senha pro banco n ficar exposto
         $hash = password_hash($senha, PASSWORD_DEFAULT);
 
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':senha', $hash);
+        $cmd->bindParam(':nome', $nome);
+         $cmd->bindParam(':email', $email);
+        $cmd->bindParam(':senha', $hash);
 
-        return $stmt->execute();
+        // var_dump($cmd); die;
+
+        return $cmd->execute();
     }
 
-    public function autenticar($email, $senha) {
-        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-            $user = $stmt->fetch();
-            
-            // Verifica se a senha bate com o hash seguro do banco
-            if (password_verify($senha, $user['password'])) {
-                unset($user['password']);
-                return $user;
-            }
-        }
+    public function autenticar($email, $senha) 
+    {
+        $sql = "SELECT * FROM ".$this->tabela." WHERE email = :email LIMIT 1";
         
-        return false;
+        $cmd = $this->db->prepare($sql);
+        $cmd->bindParam(':email', $email);
+        $cmd->execute();
+
+        $dados_usu = $cmd->fetch(PDO::FETCH_ASSOC);
+
+        // print_r($dados_usu); die; // testando dps tirar
+        
+        // verifica se achou o usario e dps bate a senha
+        if ($dados_usu && password_verify($senha, $dados_usu['password'])) {
+            
+            // limpa a senha do array p n retornar pra sessao
+            unset($dados_usu['password']); 
+            
+            return $dados_usu;
+        }else{
+             return null;
+        }
     }
 }

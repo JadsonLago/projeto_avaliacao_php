@@ -1,20 +1,27 @@
 <?php
 
-spl_autoload_register(function ($class) {
-    $base_dir = __DIR__ . '/';
+spl_autoload_register(function($classe) 
+{
+    $dir_base = __DIR__ . '/';
     
-    // Força a barra normal (/) no lugar da invertida (\) para evitar bugs de caminho no Windows
-    $class_path = str_replace('\\', '/', $class);
+    // ajustando a barra p/ n dar problema de caminho no windows
+     $caminho_classe=str_replace('\\', '/', $classe);
     
-    $file = $base_dir . $class_path . '.php';
+    $arquivo = $dir_base . $caminho_classe . '.php';
 
-    if (file_exists($file)) {
-        require_once $file;
+    // echo $arquivo; die(); // testando o caminho dps tirar
+
+    if (file_exists($arquivo)) {
+        require_once $arquivo;
     } else {
-        // O NOSSO ESPIÃO: Se ele não achar o arquivo, vai estourar na tela o caminho exato que ele tentou buscar
+        // meu debug pra qnd ele n achar o arquivo da classe (tipo qnd esquece de criar)
         echo "<div style='background: red; color: white; padding: 10px; z-index: 9999;'>";
-        echo "<strong>Erro no Autoload:</strong> O PHP tentou carregar a classe <b>{$class}</b>, mas não encontrou o arquivo no caminho:<br>";
-        echo "<code>{$file}</code>";
+        // coloquei htmlspecialchars por seguranca caso o nome venha bizarro
+        echo "<strong>Erro no Autoload:</strong> O PHP tentou carregar a classe <b>" . htmlspecialchars($classe) . "</b>, mas não encontrou o arquivo no caminho:<br>";
+        echo "<code>" . htmlspecialchars($arquivo) . "</code>";
         echo "</div>";
+        
+        // para a execucao senao da erro fatal zuando a tela inteira
+        die();
     }
 });

@@ -57,7 +57,19 @@ switch ($url) {
     case '/servico/salvar':
         (new ServicoController())->salvar();
         break; // <-- Faltava este break;
-
+    
+    case '/servico/editar':
+        (new ServicoController())->editar();
+        break;
+    case '/servico/atualizar':
+        (new ServicoController())->atualizar();
+        break;
+    case '/servico/excluir':
+        (new ServicoController())->excluir();
+        break;
+    case '/servico/finalizar':
+        (new ServicoController())->finalizar();
+        break;
     default:
         http_response_code(404);
         echo "Página não encontrada (Erro 404)";

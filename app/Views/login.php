@@ -11,22 +11,28 @@
 <div class="login-container">
     <h2>Sistema de Controle de Serviços</h2>
     
-    <?php if (!empty($erro)): ?>
-        <div class="alert"><?php echo htmlspecialchars((string)$erro, ENT_QUOTES, 'UTF-8'); ?></div>
-    <?php endif; ?>
+    <?php 
+    // mostra a msg de erro na tela caso erre os dados
+    if (isset($erro) && $erro != '') { 
+    ?>
+        <div class="alert"><?php echo htmlspecialchars($erro); ?></div>
+    <?php } ?>
 
     <form action="/logar" method="POST">
         
-        <?php if (isset($_SESSION['csrf_token'])): ?>
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
-        <?php endif; ?>
+        <?php 
+        // mandando o token de seguranca q ta na sessao pro post
+        if(isset($_SESSION['csrf_token'])){ 
+        ?>
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+        <?php } ?>
 
         <div class="form-group">
             <input type="email" name="email" placeholder="email@email.com" required>
         </div>
         
         <div class="form-group">
-            <input type="password" name="senha" placeholder="*************" required>
+             <input type="password" name="senha" placeholder="*************" required>
         </div>
         
         <div class="actions">
