@@ -20,6 +20,30 @@
 </header>
 
 <main class="conteudo-dashboard">
+
+<!-- Seção de Destaques -->
+    <div class="destaques">
+        <div class="card-destaque">
+            <h3>Valor Total Prestado</h3>
+            <!-- Imprime o valor total formatado -->
+            <p class="valor">R$ <?php echo number_format($valorTotal, 2, ',', '.'); ?></p>
+        </div>
+        
+        <div class="card-destaque">
+            <h3>Últimos Pendentes</h3>
+            <ul>
+                <?php if(empty($servicosPendentes)): ?>
+                    <li>Nenhum serviço pendente.</li>
+                <?php else: ?>
+                    <!-- Lista os servicos pendentes -->
+                    <?php foreach($servicosPendentes as $pendente): ?>
+                        <li>ID <?php echo $pendente['id_service']; ?> - <?php echo htmlspecialchars($pendente['description']); ?></li>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
+    
     <h2>DASHBOARD</h2>
     
     <table class="tabela-servicos">

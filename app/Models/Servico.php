@@ -26,4 +26,33 @@ class Servico {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function calcularTotalPorUsuario(int $idUsuario): float {
+        // Corrigido para {$this->table}
+        $sql = "SELECT SUM(price) as total FROM {$this->table} WHERE user_id_user = :id_usuario";
+        
+        // Corrigido para $this->db
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $resultado['total'] ? (float)$resultado['total'] : 0.0;
+    }
+
+    public function listarPendentesPorUsuario(int $idUsuario): array {
+        // Corrigido para {$this->table}
+        $sql = "SELECT id_service, description FROM {$this->table} 
+                WHERE user_id_user = :id_usuario AND finished_at IS NULL 
+                ORDER BY id_service DESC LIMIT 3";
+                
+        // Corrigido para $this->db
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
+
