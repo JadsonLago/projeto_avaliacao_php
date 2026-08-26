@@ -7,6 +7,7 @@ require_once __DIR__ . '/../autoload.php';
 
 use app\Controllers\LoginController;
 use app\Controllers\DashboardController;
+use app\Controllers\ServicoController;
 
 // Pega a rota atual da url
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
@@ -31,14 +32,20 @@ switch ($url) {
         break;
 
     case '/dashboard':
-        // Protecao basica da sessao
         if (!isset($_SESSION['usuario'])) {
             header('Location: /login');
             exit;
         }
-
         (new DashboardController())->index();
         break;
+
+    case '/servico/novo':
+        (new ServicoController())->novo();
+        break; // <-- Faltava este break;
+
+    case '/servico/salvar':
+        (new ServicoController())->salvar();
+        break; // <-- Faltava este break;
 
     default:
         http_response_code(404);

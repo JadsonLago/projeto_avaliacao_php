@@ -10,8 +10,8 @@
 
 <header class="topo-dashboard">
     <div class="info-usuario">
-        <p>Logado como: <strong><?php echo htmlspecialchars($_SESSION['usuario']['name']); ?></strong></p>
-        <p class="data-atual">Data de hoje: <?php echo $dataAtual; ?></p>
+        <p>Logado como: <strong><?= htmlspecialchars((string)$_SESSION['usuario']['name'], ENT_QUOTES, 'UTF-8') ?></strong></p>
+        <p class="data-atual">Data de hoje: <?= htmlspecialchars((string)$dataAtual, ENT_QUOTES, 'UTF-8') ?></p>
     </div>
     <div class="botoes-topo">
         <a href="/servico/novo" class="btn-entrar">Cadastrar Serviço</a>
@@ -21,23 +21,20 @@
 
 <main class="conteudo-dashboard">
 
-<!-- Seção de Destaques -->
     <div class="destaques">
         <div class="card-destaque">
             <h3>Valor Total Prestado</h3>
-            <!-- Imprime o valor total formatado -->
-            <p class="valor">R$ <?php echo number_format($valorTotal, 2, ',', '.'); ?></p>
+            <p class="valor">R$ <?= number_format((float)$valorTotal, 2, ',', '.') ?></p>
         </div>
         
         <div class="card-destaque">
             <h3>Últimos Pendentes</h3>
             <ul>
-                <?php if(empty($servicosPendentes)): ?>
+                <?php if (empty($servicosPendentes)): ?>
                     <li>Nenhum serviço pendente.</li>
                 <?php else: ?>
-                    <!-- Lista os servicos pendentes -->
-                    <?php foreach($servicosPendentes as $pendente): ?>
-                        <li>ID <?php echo $pendente['id_service']; ?> - <?php echo htmlspecialchars($pendente['description']); ?></li>
+                    <?php foreach ($servicosPendentes as $pendente): ?>
+                        <li>ID <?= (int)$pendente['id_service'] ?> - <?= htmlspecialchars((string)$pendente['description'], ENT_QUOTES, 'UTF-8') ?></li>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </ul>
@@ -45,6 +42,20 @@
     </div>
     
     <h2>DASHBOARD</h2>
+
+    <?php if (!empty($_SESSION['mensagem_sucesso'])): ?>
+        <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px;">
+            <?= htmlspecialchars((string)$_SESSION['mensagem_sucesso'], ENT_QUOTES, 'UTF-8') ?>
+        </div>
+        <?php unset($_SESSION['mensagem_sucesso']); ?>
+    <?php endif; ?>
+
+    <?php if (!empty($_SESSION['mensagem_erro'])): ?>
+        <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px;">
+            <?= htmlspecialchars((string)$_SESSION['mensagem_erro'], ENT_QUOTES, 'UTF-8') ?>
+        </div>
+        <?php unset($_SESSION['mensagem_erro']); ?>
+    <?php endif; ?>
     
     <table class="tabela-servicos">
         <thead>
@@ -58,7 +69,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php if(empty($servicos)): ?>
+            <?php if (empty($servicos)): ?>
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 20px;">Nenhum serviço encontrado.</td>
                 </tr>

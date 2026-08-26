@@ -54,5 +54,16 @@ class Servico {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function criarServico($descricao, $preco, $idUsuario) {
+        $sql = "INSERT INTO {$this->table} (description, price, user_id_user) VALUES (:descricao, :preco, :id_usuario)";
+        $comando = $this->db->prepare($sql);
+        
+        $comando->bindParam(':descricao', $descricao);
+        $comando->bindParam(':preco', $preco);
+        $comando->bindParam(':id_usuario', $idUsuario);
+        
+        return $comando->execute();
+    }
 }
 
