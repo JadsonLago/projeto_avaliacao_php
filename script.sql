@@ -5,7 +5,7 @@ CREATE TABLE user (
     id_user BIGINT(20) AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150),
     email VARCHAR(100),
-    password VARCHAR(45),
+    password VARCHAR(65),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     update_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     ativo TINYINT(1) DEFAULT 1
@@ -24,6 +24,5 @@ CREATE TABLE service (
 );
 
 -- A senha é apenas para desenvolvimentos e testes, não utilize em produção.
--- A senha '123456' em MD5 é 'e10adc3949ba59abbe56e057f20f883e' - 
 INSERT INTO user (name, email, password, ativo) 
-VALUES ('Gestor Teste', 'admin@jminformatica.com', md5('123456'), 1); 
+VALUES ('Gestor Teste', 'admin@jminformatica.com', '$2y$10$EXEMPLO_DE_HASH_GERADO_PELO_PHP_AQUI...', 1);

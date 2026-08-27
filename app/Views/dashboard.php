@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - JM Informática</title>
-    <link rel="stylesheet" href="/css/style.css">
-    
+<?php 
+// arrumar o titulo da pagina antes de chamar o head
+$tituloPagina = "Dashboard - JM Informática";
+
+// estilo do painel pra nao quebrar os filtros
+$estilosExtras = '
     <style>
-        /* Ajuste fino para os filtros híbridos caberem lado a lado */
         .wf-filtros { flex-wrap: wrap; align-items: flex-end; }
         .wf-filtros .campo-filtro { display: flex; flex-direction: column; gap: 5px; }
         .wf-filtros .campo-filtro label { font-size: 12px; font-weight: bold; color: #555; }
@@ -16,34 +13,18 @@
             font-size: 14px; width: 160px; height: 40px; box-sizing: border-box; background: #fff;
         }
         .wf-filtros button { height: 40px; margin-bottom: 0; }
-        
-        /* css maroto pros botoes de post parecerem link */
         .btn-acao-form { background: none; border: none; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; }
     </style>
-</head>
-<body>
+';
 
-<div class="wf-container">
-    
-    <!-- MENU LATERAL -->
-    <aside class="wf-sidebar">
-        <div class="user-info">
-            Logado como: <strong><?php echo htmlspecialchars($_SESSION['usuario']['name']); ?></strong>
-        </div>
-        <div class="user-data">
-            Data atual: <?php echo date('d/m/Y'); ?>
-        </div>
-        
-        <a href="/servico/novo" class="link-cadastrar">Cadastrar Serviço</a>
-        
-        <!-- O margin-top: auto no CSS joga o Sair para o final -->
-        <a href="/sair" class="link-sair">Sair do Sistema</a>
-    </aside>
+require_once __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/sidebar.php';
+?>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="wf-main">
         
-        <!-- monstrando avisos na tela de suceso ou erro -->
+        <!-- checa se tem msg de sucesso pra mostrar -->
         <?php if(isset($_SESSION['mensagem_sucesso']) && $_SESSION['mensagem_sucesso'] != '') { ?>
             <div style="background: #d4edda; color: #155724; padding: 10px; border: 1px solid #111; margin-bottom: 20px;">
                 <?php echo $_SESSION['mensagem_sucesso']; ?>
@@ -60,7 +41,7 @@
 
         <h1>DASHBOARD</h1>
 
-        <!-- BLOCOS SUPERIORES (Nossos dados com a fonte do Wireframe) -->
+        <!-- BLOCOS SUPERIORES -->
         <div class="wf-lists-row">
             <div class="wf-list-col">
                 <h2>Valor Total Prestado</h2>
@@ -76,7 +57,7 @@
                         <li>Nenhum serviço pendente.</li>
                     <?php } else { ?>
                         <?php 
-                        // o model ja ta trazendo so os 3 ultimos, so rodar
+                        // traz so os pends da lista rapida
                         foreach($servicosPendentes as $pend){ 
                         ?>
                             <li><?php echo $pend['id_service']; ?> - <?php echo htmlspecialchars($pend['description']); ?></li>
@@ -86,7 +67,7 @@
             </div>
         </div>
         
-        <!-- FILTROS COM VALIDAÇÃO JS E ALINHAMENTO -->
+        <!-- FORMULARIO DE FILTROS -->
         <form action="/dashboard" method="GET" class="wf-filtros" onsubmit="return validarFiltros()">
             
             <div class="wf-filtros-inputs">
@@ -123,7 +104,7 @@
         </form>            
         
         <?php
-        // var_dump($servicos); die(); // debug da grid de listagem
+        // var_dump($lista_serv); die(); // conferir se o array ta vindo certo
         ?>
 
         <table class="wf-table">
@@ -144,15 +125,15 @@
                     <?php foreach($lista_serv as $serv) { ?>
                         
                         <?php 
-                            // checa se ja finalizou pra montar o texto do status
+                            // ve se ta pendente ou finalizado pra formatar a linha
                             $ta_pendente = false;
                             
                             if($serv['finished_at'] == null || $serv['finished_at'] == ""){
                                 $txt_status = "PENDENTE";
                                 $ta_pendente = true;
                             }else{
-                                 $data_f = date('d/m/Y', strtotime($serv['finished_at']));
-                                 $txt_status = "FINALIZADO <span style='font-size: 11px; color: #666; font-weight: normal;'>&bull; " . $data_f . "</span>";
+                                $data_f = date('d/m/Y', strtotime($serv['finished_at']));
+                                $txt_status = "FINALIZADO <span style='font-size: 11px; color: #666; font-weight: normal;'>&bull; " . $data_f . "</span>";
                             }
                         ?>
                         
@@ -164,24 +145,22 @@
                             <td><?php echo htmlspecialchars($serv['nome_usuario']); ?></td>
                             <td>
                                 <?php if($ta_pendente){ ?>
-                                    <!-- coloquei form aqui p mandar post com csrf e n dar vulnerabilidade no get -->
                                     <form action="/servico/finalizar" method="POST" style="display:inline;">
-                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                                         <input type="hidden" name="id" value="<?php echo $serv['id_service']; ?>">
                                         <button type="submit" class="wf-link-acao btn-acao-form" style="color: green; font-weight: bold;">Finalizar</button>
                                     </form>
                                 <?php }else{ ?>
-                                     <span class="wf-link-acao" style="color: #999999; cursor: not-allowed; font-weight: bold;">Concluído</span>
+                                    <span class="wf-link-acao" style="color: #999999; cursor: not-allowed; font-weight: bold;">Concluído</span>
                                 <?php } ?>
                                 
                                 <a href="/servico/editar?id=<?php echo $serv['id_service']; ?>" class="wf-link-acao">Alterar</a>
                                 
-                                 <!-- mudei pra post tb pq deletar no get os caras apagam pela url -->
-                                 <form action="/servico/excluir" method="POST" style="display:inline;" onsubmit="return confirm('Excluir este serviço?');">
-                                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                     <input type="hidden" name="id" value="<?php echo $serv['id_service']; ?>">
-                                     <button type="submit" class="wf-link-acao btn-acao-form" style="color: #cc0000;">Excluir</button>
-                                 </form>
+                                <form action="/servico/excluir" method="POST" style="display:inline;" onsubmit="return confirm('Excluir este serviço?');">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                                    <input type="hidden" name="id" value="<?php echo $serv['id_service']; ?>">
+                                    <button type="submit" class="wf-link-acao btn-acao-form" style="color: #cc0000;">Excluir</button>
+                                </form>
                             </td>
                         </tr>
                     <?php } ?>
@@ -190,7 +169,6 @@
         </table>
 
     </main>
-</div>
-<script src="/js/scripts.js"></script>
-</body>
-</html>
+<?php 
+require_once __DIR__ . '/partials/footer.php'; 
+?>

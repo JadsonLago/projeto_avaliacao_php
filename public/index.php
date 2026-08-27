@@ -19,6 +19,7 @@ require_once __DIR__ . '/../autoload.php';
 use app\Controllers\LoginController;
 use app\Controllers\DashboardController;
 use app\Controllers\ServicoController;
+use app\Controllers\UsuarioController;
 
 // Pega a rota atual da url
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
@@ -70,6 +71,15 @@ switch ($url) {
     case '/servico/finalizar':
         (new ServicoController())->finalizar();
         break;
+
+    case '/cadastro':
+        (new UsuarioController())->novo();
+        break;
+
+    case '/usuario/salvar':
+        (new UsuarioController())->salvar();
+        break;
+            
     default:
         http_response_code(404);
         echo "Página não encontrada (Erro 404)";

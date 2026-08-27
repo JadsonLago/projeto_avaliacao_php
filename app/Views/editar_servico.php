@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Alterar Serviço</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
+<?php 
+$tituloPagina = "Novo Serviço - JM Informática";
+require_once __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/sidebar.php';
+?>
+
+    <main class="wf-main">
 <div class="login-container">
     <h2>Alterar Serviço</h2>
 
@@ -41,5 +40,8 @@
         </div>
     </form>
 </div>
-</body>
-</html>
+</main>
+
+<?php 
+require_once __DIR__ . '/partials/footer.php'; 
+?>
