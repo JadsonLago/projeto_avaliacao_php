@@ -4,7 +4,7 @@ spl_autoload_register(function($classe)
 {
     $dir_base = __DIR__ . '/';
     
-    // ajustando a barra p/ n dar problema de caminho no windows
+    // ajustando a barra p/ n dar problema de caminho
      $caminho_classe=str_replace('\\', '/', $classe);
     
     $arquivo = $dir_base . $caminho_classe . '.php';

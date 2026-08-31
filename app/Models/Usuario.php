@@ -17,17 +17,15 @@ class Usuario
     }
 
     public function criarUsuario($nome, $email, $senha) {
-        $sql="INSERT INTO ".$this->tabela." (name, email, password) VALUES (:nome, :email, :senha)";
+        $sql = "INSERT INTO " . $this->tabela . " (name, email, password) VALUES (:nome, :email, :senha)";
         $cmd = $this->db->prepare($sql);
 
-        // gerando hash da senha pro banco n ficar exposto
-        $hash = password_hash($senha, PASSWORD_DEFAULT);
+        // Garante que a senha seja gravada uma única vez em hash.
+        $hash = password_get_info($senha)['algo'] ? $senha : password_hash($senha, PASSWORD_DEFAULT);
 
         $cmd->bindParam(':nome', $nome);
-         $cmd->bindParam(':email', $email);
+        $cmd->bindParam(':email', $email);
         $cmd->bindParam(':senha', $hash);
-
-        // var_dump($cmd); die;
 
         return $cmd->execute();
     }

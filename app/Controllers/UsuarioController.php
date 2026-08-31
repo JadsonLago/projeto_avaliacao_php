@@ -33,23 +33,17 @@ class UsuarioController
         }
 
         $nome = trim($_POST['nome_completo'] ?? '');
-          $email = trim($_POST['email_usuario'] ?? '');
+        $email = trim($_POST['email_usuario'] ?? '');
         $senha = $_POST['senha_usuario'] ?? '';
-
-        // var_dump($_POST); exit; // debug pra ver oq ta vindo do form
 
         if ($nome == '' || $email == '' || $senha == '') {
             $_SESSION['mensagem_erro'] = "Preencha todos os campos obrigatórios.";
             header("Location: /cadastro");
-              exit;
+            exit;
         }
 
         $usuarioModel = new Usuario();
-
-        // criptografa a senha antes de mandar pro model
-        $senha_cripto = password_hash($senha, PASSWORD_DEFAULT);
-
-          $res_cad = $usuarioModel->criarUsuario($nome, $email, $senha_cripto);
+        $res_cad = $usuarioModel->criarUsuario($nome, $email, $senha);
 
         if ($res_cad) {
             $_SESSION['mensagem_sucesso'] = "Usuário cadastrado com sucesso! Faça o login.";
